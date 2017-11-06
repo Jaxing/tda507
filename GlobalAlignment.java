@@ -14,8 +14,8 @@ class TraceNode {
     List<TraceNode> children = new ArrayList();
     int score;
     int direction;
-    char w1;
-    char w2;
+    char X;
+    char Y;
     char binding;
 
 
@@ -30,6 +30,7 @@ class TraceNode {
 }
 public class GlobalAlignment {
 
+    public static int nbr_of_optimal = 1;
     public static final int MAX_LENGTH	= 100;
 
     public static final int MATCH_SCORE	= 2;
@@ -46,8 +47,8 @@ public class GlobalAlignment {
         int i, j;
         int alignmentLength, score, tmp;
 
-        String X = "ATTA";
-        String Y = "ATTTTA";
+        String X = "ABBA";
+        String Y = "ATTTA";
 
         int F[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1];     /* score matrix */
         int trace[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1]; /* trace matrix */
@@ -143,81 +144,13 @@ public class GlobalAlignment {
         // Trace back from the lower-right corner of the matrix
         //
 
-        i = m;
-        j = n;
-        alignmentLength = 0;
+        TraceNode traceTree = new TraceNode();
+        createTraceTree(traceTree, X, Y, F, m, n);
 
-        while ( trace[i][j] != STOP ) {
+        print(traceTree, new StringBuilder(), new StringBuilder(), new StringBuilder());
 
-            switch ( trace[i][j] ) {
-
-                case DIAG:
-                    alignX[alignmentLength] = X.charAt(i-1);
-                    alignY[alignmentLength] = Y.charAt(j-1);
-                    bindAlign[alignmentLength] = '|';
-                    alignedChars++;
-                    i--;
-                    j--;
-                    alignmentLength++;
-                    break;
-
-                case LEFT:
-                    alignX[alignmentLength] = '-';
-                    alignY[alignmentLength] = Y.charAt(j-1);
-                    bindAlign[alignmentLength] = ' ';
-                    j--;
-                    alignmentLength++;
-                    break;
-
-                case UP:
-                    alignX[alignmentLength] = X.charAt(i-1);
-                    alignY[alignmentLength] = '-';
-                    bindAlign[alignmentLength] = ' ';
-                    i--;
-                    alignmentLength++;
-            }
-        }
-
-
-        //
-        // Unaligned beginning
-        //
-
-        while ( i>0 ) {
-            alignX[alignmentLength] = X.charAt(i-1);
-            alignY[alignmentLength] = '-';
-            bindAlign[alignmentLength] = ' ';
-            i--;
-            alignmentLength++;
-        }
-
-        while ( j>0 ) {
-            alignX[alignmentLength] = '-';
-            alignY[alignmentLength] = Y.charAt(j-1);
-            bindAlign[alignmentLength] = ' ';
-            j--;
-            alignmentLength++;
-        }
-
-        //
-        // Print alignment
-        //
-
-        for ( i=alignmentLength-1 ; i>=0 ; i-- ) {
-            System.out.print(alignX[i]);
-        }
-        System.out.println();
-        for ( i=alignmentLength-1 ; i>=0 ; i-- ) {
-            System.out.print(bindAlign[i]);
-        }
-        System.out.println();
-        for ( i=alignmentLength-1 ; i>=0 ; i-- ) {
-            System.out.print(alignY[i]);
-        }
-        System.out.println();
-
-//        System.out.println("Number of optimal paths");
-//        System.out.println(count(traceTree));
+        System.out.println("Number of optimal paths");
+        System.out.println(count(traceTree));
 
         // Calculates the percent identity as number of aligned characters
         // divided by the shortest sequences, which would be the probabillity
@@ -240,13 +173,12 @@ public class GlobalAlignment {
         System.out.println();
     }
 
-    public static TraceNode createTraceTree(TraceNode currentNode, String X, String Y, int[][] scoreMatrix, int i, int j) {
-        if (scoreMatrix[i][j] == STOP) {
-            System.out.println(i + " " + j);
-            return null;
+    public static void createTraceTree(TraceNode currentNode, String X, String Y, int[][] scoreMatrix, int i, int j) {
+        if (i-1 < 0 || j-1 < 0) {
+            return;
         }
         int diag;
-        int maxScore = 0;
+        int maxScore = -100000000;
 
         if ( X.charAt(i-1)==Y.charAt(j-1) ) {
             diag = scoreMatrix[i-1][j-1] + MATCH_SCORE;
@@ -271,11 +203,10 @@ public class GlobalAlignment {
         }
 
         currentNode.score = maxScore;
-
         if ( diag == maxScore) {
             TraceNode child = new TraceNode(DIAG);
-            child.w1 = X.charAt(i-1);
-            child.w2 = Y.charAt(j-1);
+            child.X = X.charAt(i-1);
+            child.Y = Y.charAt(j-1);
             child.binding = '|';
             createTraceTree(child, X, Y, scoreMatrix, i-1, j-1);
             currentNode.children.add(child);
@@ -283,8 +214,8 @@ public class GlobalAlignment {
 
         if ( gapI == maxScore) {
             TraceNode child = new TraceNode(UP);
-            child.w1 = '-';
-            child.w2 = Y.charAt(j-1);
+            child.X = X.charAt(i-1);
+            child.Y = '-';
             child.binding = ' ';
             createTraceTree(child,X, Y, scoreMatrix, i-1, j);
             currentNode.children.add(child);
@@ -292,17 +223,16 @@ public class GlobalAlignment {
 
         if ( gapJ == maxScore) {
             TraceNode child = new TraceNode(LEFT);
-            child.w1 = X.charAt(i-1);
-            child.w2 = '-';
+            child.X = '-';
+            child.Y = Y.charAt(j-1);
             child.binding = ' ';
             createTraceTree(child, X, Y, scoreMatrix, i, j-1);
             currentNode.children.add(child);
         }
-
-        return currentNode;
     }
 
     public static int count(TraceNode traceTree) {
+
         if (traceTree.children == null || traceTree.children.isEmpty()) {
             return 1;
         }
@@ -310,10 +240,25 @@ public class GlobalAlignment {
         int paths = 0;
 
         for (TraceNode node : traceTree.children) {
-            System.out.println(node.children.size());
             paths += count(node);
         }
 
         return paths;
+    }
+
+    public static void print(TraceNode traceTree, StringBuilder X, StringBuilder Y, StringBuilder bind){
+        X.append(traceTree.X);
+        Y.append(traceTree.Y);
+        bind.append(traceTree.binding);
+        if (traceTree.children == null || traceTree.children.isEmpty()) {
+            System.out.format("Solution %d \n", GlobalAlignment.nbr_of_optimal++);
+            System.out.println(X.toString());
+            System.out.println(bind.toString());
+            System.out.println(Y.toString());
+        }
+
+        for (TraceNode node : traceTree.children) {
+            print(node, new StringBuilder(X.toString()), new StringBuilder(Y.toString()), new StringBuilder(bind.toString()));
+        }
     }
 }
