@@ -206,14 +206,10 @@ public class LocalAlignment {
         System.out.println(1.0 * alignedChars / shortest);
         System.out.println();
 
-        int k = 0;
-        int l = 0;
-        while (k < n && l < m) {
-            if (X.charAt(l) != Y.charAt(k)) {
+        for ( i=alignmentLength-1 ; i > 0 ; i--) {
+            if (alignX[i] != alignY[i]) {
                 hammingDistance++;
             }
-            k++;
-            l++;
         }
         System.out.println("Hamming distance:");
         System.out.println(hammingDistance);

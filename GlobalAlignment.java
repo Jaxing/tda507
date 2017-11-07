@@ -147,30 +147,11 @@ public class GlobalAlignment {
         TraceNode traceTree = new TraceNode();
         createTraceTree(traceTree, X, Y, F, m, n);
 
-        print(traceTree, new StringBuilder(), new StringBuilder(), new StringBuilder(), shortest);
-
         System.out.println("Number of optimal paths");
         System.out.println(count(traceTree));
 
-        // Calculates the percent identity as number of aligned characters
-        // divided by the shortest sequences, which would be the probabillity
-        // that a character in the short sequence is correct.
-//        System.out.println("Percent identity");
-//        System.out.println(100.0 * alignedChars / shortest + "%");
-//        System.out.println();
+        print(traceTree, new StringBuilder(), new StringBuilder(), new StringBuilder(), shortest);
 
-        int k = 0;
-        int l = 0;
-        while (k < n && l < m) {
-            if (X.charAt(l) != Y.charAt(k)) {
-                hammingDistance++;
-            }
-            k++;
-            l++;
-        }
-        System.out.println("Hamming distance:");
-        System.out.println(hammingDistance);
-        System.out.println();
     }
 
     public static void createTraceTree(TraceNode currentNode, String X, String Y, int[][] scoreMatrix, int i, int j) {
@@ -257,9 +238,12 @@ public class GlobalAlignment {
             System.out.println(Y.toString());
 
             int correctAlingment = 0;
+            int hammingDistance = 0;
             for (int i = 1 ; i < X.length() ; i++) {
                     if (X.charAt(i) == Y.charAt(i)) {
                         correctAlingment++;
+                    } else {
+                        hammingDistance++;
                     }
             }
 
@@ -268,6 +252,9 @@ public class GlobalAlignment {
             System.out.println("\nPercent identity: ");
 
             System.out.println(100.0 * correctAlingment / shortest + "%\n");
+
+            System.out.println("\nHamming distance: ");
+            System.out.println(hammingDistance + "\n");
         }
 
         for (TraceNode node : traceTree.children) {
