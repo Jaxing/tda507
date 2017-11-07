@@ -47,8 +47,8 @@ public class GlobalAlignment {
         int i, j;
         int alignmentLength, score, tmp;
 
-        String X = "ABBA";
-        String Y = "ATTTA";
+        String X = "ATTA";
+        String Y = "ATTTTA";
 
         int F[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1];     /* score matrix */
         int trace[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1]; /* trace matrix */
@@ -147,7 +147,7 @@ public class GlobalAlignment {
         TraceNode traceTree = new TraceNode();
         createTraceTree(traceTree, X, Y, F, m, n);
 
-        print(traceTree, new StringBuilder(), new StringBuilder(), new StringBuilder());
+        print(traceTree, new StringBuilder(), new StringBuilder(), new StringBuilder(), shortest);
 
         System.out.println("Number of optimal paths");
         System.out.println(count(traceTree));
@@ -155,9 +155,9 @@ public class GlobalAlignment {
         // Calculates the percent identity as number of aligned characters
         // divided by the shortest sequences, which would be the probabillity
         // that a character in the short sequence is correct.
-        System.out.println("Percent identity");
-        System.out.println(100.0 * alignedChars / shortest + "%");
-        System.out.println();
+//        System.out.println("Percent identity");
+//        System.out.println(100.0 * alignedChars / shortest + "%");
+//        System.out.println();
 
         int k = 0;
         int l = 0;
@@ -246,7 +246,7 @@ public class GlobalAlignment {
         return paths;
     }
 
-    public static void print(TraceNode traceTree, StringBuilder X, StringBuilder Y, StringBuilder bind){
+    public static void print(TraceNode traceTree, StringBuilder X, StringBuilder Y, StringBuilder bind, int shortest){
         X.append(traceTree.X);
         Y.append(traceTree.Y);
         bind.append(traceTree.binding);
@@ -255,10 +255,27 @@ public class GlobalAlignment {
             System.out.println(X.toString());
             System.out.println(bind.toString());
             System.out.println(Y.toString());
+
+            int correctAlingment = 0;
+            for (int i = 1 ; i < X.length() ; i++) {
+                    if (X.charAt(i) == Y.charAt(i)) {
+                        correctAlingment++;
+                    }
+            }
+
+            // Calculates the percent identity as number of aligned characters
+            // divided by the shortest sequences.
+            System.out.println("\nPercent identity: ");
+
+            System.out.println(100.0 * correctAlingment / shortest + "%\n");
         }
 
         for (TraceNode node : traceTree.children) {
-            print(node, new StringBuilder(X.toString()), new StringBuilder(Y.toString()), new StringBuilder(bind.toString()));
+            print(node,
+                    new StringBuilder(X.toString()),
+                    new StringBuilder(Y.toString()),
+                    new StringBuilder(bind.toString()),
+                    shortest);
         }
     }
 }

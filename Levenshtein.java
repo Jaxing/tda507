@@ -26,8 +26,8 @@ public class Levenshtein {
         int i, j;
         int alignmentLength, score, tmp;
 
-        String X = "PAWHEAE";
-        String Y = "HDAGAWGHEQ";
+        String X = "ATCGAT";
+        String Y = "ATACGT";
 
         int F[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1];     /* score matrix */
         int trace[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1]; /* trace matrix */
@@ -135,11 +135,12 @@ public class Levenshtein {
                 case DIAG:
                     if (X.charAt(i-1) != Y.charAt(j-1)) {
                         count++; // Change
+                    } else {
+                        alignedChars++;
                     }
                     alignX[alignmentLength] = X.charAt(i-1);
                     alignY[alignmentLength] = Y.charAt(j-1);
                     bindAlign[alignmentLength] = '|';
-                    alignedChars++;
                     i--;
                     j--;
                     alignmentLength++;
@@ -205,8 +206,7 @@ public class Levenshtein {
         System.out.println();
 
         // Calculates the percent identity as number of aligned characters
-        // divided by the shortest sequences, which would be the probabillity
-        // that a character in the short sequence is correct.
+        // divided by the shortest sequences.
         System.out.println("Percent identity");
         System.out.println(1.0 * alignedChars / shortest);
         System.out.println();

@@ -26,7 +26,7 @@ public class LocalAlignment {
         int i, j;
         int alignmentLength, score, tmp;
 
-        String X = "PAWHEAE";
+        String X = "PAWHEQAE";
         String Y = "HDAGAWGHEQ";
 
         int F[][] = new int[MAX_LENGTH+1][MAX_LENGTH+1];     /* score matrix */
@@ -128,12 +128,12 @@ public class LocalAlignment {
         // Find max value in score matrix
         //
 
-        int max_j = 0;
-        int max_i = 0;
+        int max_j = n;
+        int max_i = m;
         int max_value = F[max_i][max_j];
 
-        for (int k=0 ; k < m ; k++) {
-            for (int l=0 ; l < n ; l++) {
+        for (int k=m ; k >= 0 ; k--) {
+            for (int l=n ; l >= 0 ; l--) {
                 if (max_value < F[k][l]) {
                     max_i = k;
                     max_j = l;
@@ -141,7 +141,6 @@ public class LocalAlignment {
                 }
             }
         }
-
 
         //
         // Trace back from the max element in score matrix
@@ -152,14 +151,15 @@ public class LocalAlignment {
         alignmentLength = 0;
 
         while ( trace[i][j] != STOP ) {
-            System.out.println(trace[i][j]);
             switch ( trace[i][j] ) {
 
                 case DIAG:
                     alignX[alignmentLength] = X.charAt(i-1);
                     alignY[alignmentLength] = Y.charAt(j-1);
                     bindAlign[alignmentLength] = '|';
-                    alignedChars++;
+                    if (alignX[alignmentLength] == alignY[alignmentLength]) {
+                        alignedChars++;
+                    }
                     i--;
                     j--;
                     alignmentLength++;
@@ -201,8 +201,7 @@ public class LocalAlignment {
         System.out.println();
 
         // Calculates the percent identity as number of aligned characters
-        // divided by the shortest sequences, which would be the probabillity
-        // that a character in the short sequence is correct.
+        // divided by the shortest sequences.
         System.out.println("Percent identity");
         System.out.println(1.0 * alignedChars / shortest);
         System.out.println();
