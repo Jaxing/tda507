@@ -1,6 +1,6 @@
 Results from running GlobalAlignment with "ATTA" and "ATTTTA"
 
-score matrix:
+core matrix:
           A    T    T    T    T    A
      0   -2   -4   -6   -8  -10  -12
 A   -2    2    0   -2   -4   -6   -8
@@ -8,6 +8,8 @@ T   -4    0    4    2    0   -2   -4
 T   -6   -2    2    6    4    2    0
 A   -8   -4    0    4    5    3    4
 
+Number of optimal paths
+6
 Solution 1 
 ATT--A
 |||  |
@@ -15,6 +17,10 @@ ATTTTA
 
 Percent identity: 
 100.0%
+
+
+Hamming distance: 
+2
 
 Solution 2 
 AT-T-A
@@ -24,6 +30,10 @@ ATTTTA
 Percent identity: 
 100.0%
 
+
+Hamming distance: 
+2
+
 Solution 3 
 AT--TA
 ||  ||
@@ -31,6 +41,10 @@ ATTTTA
 
 Percent identity: 
 100.0%
+
+
+Hamming distance: 
+2
 
 Solution 4 
 A-TT-A
@@ -40,6 +54,10 @@ ATTTTA
 Percent identity: 
 100.0%
 
+
+Hamming distance: 
+2
+
 Solution 5 
 A-T-TA
 | | ||
@@ -47,6 +65,10 @@ ATTTTA
 
 Percent identity: 
 100.0%
+
+
+Hamming distance: 
+2
 
 Solution 6 
 A--TTA
@@ -56,11 +78,9 @@ ATTTTA
 Percent identity: 
 100.0%
 
-Number of optimal paths
-6
-Hamming distance:
-1
 
+Hamming distance: 
+2
 
 Results for LocalAlignment with "PAWHEQAE" and "HDAGAWGHEQ"
 
@@ -84,7 +104,7 @@ Percent identity
 0.625
 
 Hamming distance:
-8
+1
 
 
 Results for Levenshtein with "ATCGAT" and ATACGT
@@ -107,7 +127,7 @@ Percent identity
 0.8333333333333334
 
 Hamming distance:
-3
+2
 
 Levenshtein distance:
 2
